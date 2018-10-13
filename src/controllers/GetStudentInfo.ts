@@ -19,26 +19,25 @@ export const signInStudent = async (req: Request, res: Response) => {
         const stdCrawler: StudentCrawler = new StudentCrawler(req.body.studentId, req.body.password);
         await stdCrawler.init();
 
-        var stdDB: Student = await stdRepo.getStudent(req.body.studentId);
+        var stdInfo = await stdRepo.getStudentById(req.body.studentId);
 
-        var { student, terms, subjects, scores } = await stdCrawler.getInfo();
-
-        var termDB: Array<Term> = await termRepo.getAllTerms(student);
-
-        if (stdDB === undefined) {
-            stdRepo.saveStudent(student).then((result) => {
-                res.send(student);
+        if(stdInfo === undefined) {
+            var {student, terms, subjects, scores} = await stdCrawler.getInfo();
+            stdRepo.saveStudent(student);
+            terms.forEach(term => {
+                termRepo.saveTerm(term);
             });
-        } else {
-            res.send(stdDB);
+            subjects.forEach(subject => {
+                subRepo.saveSubject(subject);
+            });
+            scores.forEach(async score => {
+                scrRepo.saveScore(score);
+            });
         }
 
-        if (termDB.length < terms.length) {
-            for (var i = termDB.length; i < terms.length; i++) {
-                await termRepo.saveTerm(terms[i]);
-            }
-        }
+        return res.send();
     } catch (err) {
+        console.log(err);
         return res.status(401).send("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại");
     }
 };

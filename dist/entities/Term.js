@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const Student_1 = require("./Student");
+const Score_1 = require("./Score");
 let Term = class Term {
 };
 __decorate([
@@ -39,9 +40,13 @@ __decorate([
 ], Term.prototype, "cumulativeScore", void 0);
 __decorate([
     typeorm_1.ManyToOne(type => Student_1.default, student => student.terms),
-    typeorm_1.JoinColumn(),
+    typeorm_1.JoinColumn({ name: "studentId" }),
     __metadata("design:type", Student_1.default)
 ], Term.prototype, "student", void 0);
+__decorate([
+    typeorm_1.OneToMany(type => Score_1.default, score => score.term),
+    __metadata("design:type", Array)
+], Term.prototype, "scores", void 0);
 Term = __decorate([
     typeorm_1.Entity("term_student")
 ], Term);

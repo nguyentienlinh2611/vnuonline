@@ -21,24 +21,24 @@ exports.signInStudent = (req, res) => __awaiter(this, void 0, void 0, function* 
     try {
         const stdCrawler = new StudentCrawl_1.default(req.body.studentId, req.body.password);
         yield stdCrawler.init();
-        var stdDB = yield stdRepo.getStudent(req.body.studentId);
-        var { student, terms, subjects, scores } = yield stdCrawler.getInfo();
-        var termDB = yield termRepo.getAllTerms(student);
-        if (stdDB === undefined) {
-            stdRepo.saveStudent(student).then((result) => {
-                res.send(student);
+        var stdInfo = yield stdRepo.getStudentById(req.body.studentId);
+        if (stdInfo === undefined) {
+            var { student, terms, subjects, scores } = yield stdCrawler.getInfo();
+            stdRepo.saveStudent(student);
+            terms.forEach(term => {
+                termRepo.saveTerm(term);
             });
+            subjects.forEach(subject => {
+                subRepo.saveSubject(subject);
+            });
+            scores.forEach((score) => __awaiter(this, void 0, void 0, function* () {
+                scrRepo.saveScore(score);
+            }));
         }
-        else {
-            res.send(stdDB);
-        }
-        if (termDB.length < terms.length) {
-            for (var i = termDB.length; i < terms.length; i++) {
-                yield termRepo.saveTerm(terms[i]);
-            }
-        }
+        return res.send();
     }
     catch (err) {
+        console.log(err);
         return res.status(401).send("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại");
     }
 });

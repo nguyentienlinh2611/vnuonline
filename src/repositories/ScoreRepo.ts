@@ -1,14 +1,20 @@
 import Score from "../entities/Score";
-import { getManager } from "typeorm";
+import { getRepository } from "typeorm";
+import Subject from "../entities/Subject";
+import Term from "../entities/Term";
 
 class ScoreRepo {
-    saveScore(score:Score) {
-        return getManager().getRepository(Score).save(score);
+    async saveScore(score:Score) {
+        var scr = await getRepository(Score).find({where:{term: score.term,subject: score.subject}});
+        return getRepository(Score).save(score);
     }
-    getScore(studentId:number,subjectId:number) {
+
+    getScore(term:Term,subject:Subject) {
+        return getRepository(Score).findOne({where:{term: term,subject: subject}});
     }
-    getAllScores(studentId:number) {
-        return getManager().getRepository(Score).findOne(studentId);
+
+    getAllScores() {
+        return getRepository(Score).find();
     }
 }
 

@@ -1,4 +1,4 @@
-import { URL_DAOTAO, REGEX_EDUCATION_INFO, REGEX_PERSONAL_INFO } from "../common/constants";
+import { URL_DAOTAO, REGEX_EDUCATION_INFO, REGEX_PERSONAL_INFO, REGEX_TERM_INFO, URL_DAOTAO_STDINFO, URL_DAOTAO_SCRINFO } from "../common/constants";
 import Student from "../entities/Student";
 import Crawler from "./Crawl";
 import Term from "../entities/Term";
@@ -42,7 +42,7 @@ class StudentCrawler {
     async getInfo() {
         const page = await this.context.newPage();
 
-        await page.goto('https://daotao.vnu.edu.vn/StdInfo/TabStdInfo.asp');
+        await page.goto(URL_DAOTAO_STDINFO);
 
         var { psnInfo, eduInfo } = await page.evaluate(() => {
             let table = [...document.querySelectorAll('fieldset')];
@@ -64,7 +64,7 @@ class StudentCrawler {
             termsArray.push(term);
         }
 
-        await page.goto('https://daotao.vnu.edu.vn/ListPoint/listpoint_Brc1.asp');
+        await page.goto(URL_DAOTAO_SCRINFO);
 
         var { eduInfo, arrayObject } = await page.evaluate(() => {
             let table = <HTMLElement>document.querySelector('#divList3');
@@ -95,40 +95,42 @@ class StudentCrawler {
             student.class = 60;
         }
 
-        var termArray = eduInfo.split(/(HỌC KỲ .*) MÃ HỌC KỲ ([0-9]*)/);
+        var termArray = eduInfo.split(REGEX_TERM_INFO);
         termArray.shift();
 
         var terms = new Array<Term>();
+        var subjects = new Array<Subject>();
+        var scores = new Array<Score>();
+        var count = 0;
         for (var i = 0; i < termArray.length; i += 3) {
-            var subjectObject = arrayObject[i / 3];
             var term = new Term();
-            term.termId = subjectObject.termId;
             term.student = student;
             term.displayId = parseInt(termArray[i + 1]);
             term.termName = termArray[i];
-            terms.push(term);
-
+            
             var subjectArray = termArray[i + 2].split(/\t\s*/);
             subjectArray.shift();
             subjectArray.pop();
 
-            var subjects = new Array<Subject>();
-            var scores = new Array<Score>();
             for (var j = 0; j < subjectArray.length; j += 7) {
                 var subject = new Subject();
+                var subjectObject = arrayObject[count];
+                term.termId = subjectObject.termId;
                 subject.subjectId = subjectObject.subjectId;
-                subject.displayId = subjectArray[i + 1];
-                subject.subjectName = subjectArray[i + 2];
-                subject.creditNumber = subjectArray[i + 3];
+                subject.displayId = subjectArray[j + 1];
+                subject.subjectName = subjectArray[j + 2];
+                subject.creditNumber = subjectArray[j + 3];
+                count++;
                 subjects.push(subject);
 
                 var score = new Score();
                 score.subject = subject;
-                score.termId = term.aiid;
-                score.tpsScore = subjectArray[i + 4];
-                score.fpsScore = subjectArray[i + 6];
+                score.term = term;
+                score.tpsScore = subjectArray[j + 4];
+                score.fpsScore = subjectArray[j + 6];
                 scores.push(score);
             }
+            terms.push(term);
         }
 
         terms.forEach((term1) => {

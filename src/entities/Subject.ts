@@ -1,4 +1,5 @@
-import {Entity, PrimaryColumn, Column} from "typeorm";
+import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
+import Score from "./Score";
 
 @Entity("subject")
 class Subject {
@@ -8,10 +9,10 @@ class Subject {
     displayId: string;
     @Column()
     subjectName: string;
-    @Column()
-    subjectType: string;
     @Column({type: "int"})
     creditNumber: number;
+    @OneToMany(type => Score, score => score.term)
+    scores: Score[];
 }
 
 export default Subject;
