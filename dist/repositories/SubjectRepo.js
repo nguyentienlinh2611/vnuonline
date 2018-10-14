@@ -4,10 +4,15 @@ const Subject_1 = require("../entities/Subject");
 const typeorm_1 = require("typeorm");
 class SubjectRepo {
     saveSubject(subject) {
-        return typeorm_1.getManager().getRepository(Subject_1.default).save(subject);
+        return typeorm_1.getRepository(Subject_1.default).save(subject);
     }
-    getSubject(subjectId) {
-        return typeorm_1.getManager().getRepository(Subject_1.default).findOne(subjectId);
+    getAllSubjects() {
+        return typeorm_1.getRepository(Subject_1.default).find();
+    }
+    getAllSubjectsOfStudent() {
+    }
+    getSubjectById(subjectId) {
+        return typeorm_1.getRepository(Subject_1.default).findOne(subjectId);
     }
 }
 exports.default = SubjectRepo;

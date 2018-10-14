@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const Score_1 = require("./Score");
 let Subject = class Subject {
 };
 __decorate([
@@ -25,13 +26,13 @@ __decorate([
     __metadata("design:type", String)
 ], Subject.prototype, "subjectName", void 0);
 __decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], Subject.prototype, "subjectType", void 0);
-__decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
 ], Subject.prototype, "creditNumber", void 0);
+__decorate([
+    typeorm_1.OneToMany(type => Score_1.default, score => score.term),
+    __metadata("design:type", Array)
+], Subject.prototype, "scores", void 0);
 Subject = __decorate([
     typeorm_1.Entity("subject")
 ], Subject);

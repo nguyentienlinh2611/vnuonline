@@ -6,7 +6,7 @@ class StudentRepo {
     saveStudent(student) {
         return typeorm_1.getManager().getRepository(Student_1.default).save(student);
     }
-    getStudent(studentId) {
+    getStudentById(studentId) {
         return typeorm_1.getManager().getRepository(Student_1.default).findOne({ displayId: studentId });
     }
 }

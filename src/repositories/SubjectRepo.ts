@@ -1,12 +1,21 @@
 import Subject from "../entities/Subject";
-import { getManager } from "typeorm";
+import { getRepository } from "typeorm";
 
 class SubjectRepo {
     saveSubject(subject:Subject) {
-        return getManager().getRepository(Subject).save(subject);
+        return getRepository(Subject).save(subject);
     }
-    getSubject(subjectId: number) {
-        return getManager().getRepository(Subject).findOne(subjectId);
+
+    getAllSubjects() {
+        return getRepository(Subject).find();
+    }
+
+    getAllSubjectsOfStudent() {
+
+    }
+
+    getSubjectById(subjectId: number) {
+        return getRepository(Subject).findOne(subjectId);
     }
 }
 

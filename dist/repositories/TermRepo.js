@@ -4,13 +4,19 @@ const Term_1 = require("../entities/Term");
 const typeorm_1 = require("typeorm");
 class TermRepo {
     saveTerm(term) {
-        return typeorm_1.getManager().getRepository(Term_1.default).save(term);
+        return typeorm_1.getRepository(Term_1.default).save(term);
     }
-    getTerm(termId) {
-        return typeorm_1.getManager().getRepository(Term_1.default).findOne(termId);
+    getAllTermsByTermId(termId) {
+        return typeorm_1.getRepository(Term_1.default).find({ termId: termId });
     }
-    getAllTerms(student) {
-        return typeorm_1.getManager().getRepository(Term_1.default).find({ student: student });
+    getTermByAIID(aiid) {
+        return typeorm_1.getRepository(Term_1.default).findOne({ aiid: aiid });
+    }
+    getAllTermsOfStudent(student) {
+        return typeorm_1.getRepository(Term_1.default).find({ student: student });
+    }
+    getTermByTermIdAndStudentId(student, termId) {
+        return typeorm_1.getRepository(Term_1.default).findOne({ student, termId });
     }
 }
 exports.default = TermRepo;

@@ -15,23 +15,15 @@ const Subject_1 = require("./Subject");
 let Score = class Score {
 };
 __decorate([
-    typeorm_1.PrimaryColumn({ type: "int" }),
-    __metadata("design:type", Number)
-], Score.prototype, "subjectId", void 0);
-__decorate([
-    typeorm_1.PrimaryColumn({ type: "int" }),
-    __metadata("design:type", Number)
-], Score.prototype, "termId", void 0);
-__decorate([
-    typeorm_1.Column({ type: "double" }),
+    typeorm_1.Column({ type: "double", nullable: true }),
     __metadata("design:type", Number)
 ], Score.prototype, "diligentScore", void 0);
 __decorate([
-    typeorm_1.Column({ type: "double" }),
+    typeorm_1.Column({ type: "double", nullable: true }),
     __metadata("design:type", Number)
 ], Score.prototype, "midtermScore", void 0);
 __decorate([
-    typeorm_1.Column({ type: "double" }),
+    typeorm_1.Column({ type: "double", nullable: true }),
     __metadata("design:type", Number)
 ], Score.prototype, "endtermScore", void 0);
 __decorate([
@@ -43,12 +35,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Score.prototype, "fpsScore", void 0);
 __decorate([
-    typeorm_1.OneToOne(type => Term_1.default),
-    typeorm_1.JoinColumn({ name: "termId" }),
+    typeorm_1.ManyToOne(type => Term_1.default, term => term.scores, {
+        primary: true,
+        nullable: false,
+    }),
+    typeorm_1.JoinColumn({ name: "termAIId" }),
     __metadata("design:type", Term_1.default)
 ], Score.prototype, "term", void 0);
 __decorate([
-    typeorm_1.OneToOne(type => Subject_1.default),
+    typeorm_1.ManyToOne(type => Subject_1.default, subject => subject.scores, {
+        primary: true,
+        nullable: false,
+    }),
     typeorm_1.JoinColumn({ name: "subjectId" }),
     __metadata("design:type", Subject_1.default)
 ], Score.prototype, "subject", void 0);

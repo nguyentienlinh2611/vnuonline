@@ -5,7 +5,8 @@ class StudentRepo {
     saveStudent(student:Student) {
         return getManager().getRepository(Student).save(student);
     }
-    getStudent(studentId: number) {
+
+    getStudentById(studentId: number) {
         return getManager().getRepository(Student).findOne({displayId: studentId});
     }
 }
