@@ -1,20 +1,22 @@
 import Score from "../entities/Score";
-import { getRepository } from "typeorm";
+import {EntityRepository, Repository} from "typeorm";
 import Subject from "../entities/Subject";
-import Term from "../entities/Term";
+import TermStudent from "../entities/TermStudent";
 
-class ScoreRepo {
-    async saveScore(score:Score) {
-        var scr = await getRepository(Score).find({where:{term: score.term,subject: score.subject}});
-        return getRepository(Score).save(score);
+@EntityRepository(Score)
+class ScoreRepo extends Repository<Score>{
+    async saveAll(scoresList: Array<Score>) {
+        await scoresList.forEach(async score => {
+            await this.save(score);
+        })
     }
 
-    getScore(term:Term,subject:Subject) {
-        return getRepository(Score).findOne({where:{term: term,subject: subject}});
+    getScore(term: TermStudent, subject: Subject) {
+        return this.findOne({where: {term: term, subject: subject}});
     }
 
     getAllScores() {
-        return getRepository(Score).find();
+        return this.find();
     }
 }
 

@@ -1,7 +1,6 @@
-import {Entity, PrimaryColumn, Column, OneToOne, JoinColumn, TableForeignKey, ManyToOne} from "typeorm";
-import Student from "./Student";
-import Term from "./Term";
+import {Entity, Column, JoinColumn, ManyToOne} from "typeorm";
 import Subject from "./Subject";
+import TermStudent from "./TermStudent";
 
 @Entity("student_subject")
 class Score {
@@ -15,17 +14,17 @@ class Score {
     tpsScore: number;
     @Column({type: "double"})
     fpsScore: number;
-    @ManyToOne(type => Term, term => term.scores, {
+    @ManyToOne(type => TermStudent, term => term.scores, {
         primary: true,
         nullable: false,
     })
-    @JoinColumn({name: "termAIId"})
-    term: Term;
+    @JoinColumn()
+    termStudent: TermStudent;
     @ManyToOne(type => Subject, subject => subject.scores, {
         primary: true,
         nullable: false,
     })
-    @JoinColumn({ name: "subjectId" })
+    @JoinColumn()
     subject: Subject;
 }
 

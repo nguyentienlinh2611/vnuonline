@@ -1,13 +1,10 @@
 import Student from "../entities/Student";
-import { getManager } from "typeorm";
+import {EntityRepository, Repository} from "typeorm";
 
-class StudentRepo {
-    saveStudent(student:Student) {
-        return getManager().getRepository(Student).save(student);
-    }
-
-    getStudentById(studentId: number) {
-        return getManager().getRepository(Student).findOne({displayId: studentId});
+@EntityRepository(Student)
+class StudentRepo extends Repository<Student>{
+    async getStudentByUserId(userId:string) {
+        return this.findOne({where: {userId: userId}});
     }
 }
 

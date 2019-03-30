@@ -1,10 +1,14 @@
-import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
+import {Entity, PrimaryColumn, Column, OneToMany, ManyToMany, OneToOne, JoinColumn} from "typeorm";
 import Term from "./Term";
+import TermStudent from "./TermStudent";
+import Attendance from "./Attendance";
+import User from "./User";
+import ClassSubject from "./ClassSubject";
 
 @Entity("student")
 class Student {
     @PrimaryColumn({type: "int"})
-    studentId: number;
+    id: number;
     @Column({type: "int"})
     displayId: number;
     @Column()
@@ -23,12 +27,19 @@ class Student {
     hometown: string;
     @Column()
     country: string;
-    @Column({type: "int"})
+    @Column({type: "int", nullable: true})
     class: number;
-    @Column()
+    @Column({type: "varchar", nullable: true})
     branch: string;
-    @OneToMany(type => Term, term => term.student)
+    @OneToOne(type => User)
+    @JoinColumn()
+    user: User;
+    @OneToMany(type => TermStudent, term => term.student)
     terms: Term[];
+    @ManyToMany(type => Attendance, attendance => attendance.students)
+    attendance: Attendance[];
+    @ManyToMany(type => ClassSubject, classSubject => classSubject.students)
+    classSubject: ClassSubject[];
 }
 
 export default Student;

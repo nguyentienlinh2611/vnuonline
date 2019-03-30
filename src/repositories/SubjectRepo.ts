@@ -1,21 +1,20 @@
 import Subject from "../entities/Subject";
-import { getRepository } from "typeorm";
+import {EntityRepository, Repository} from "typeorm";
 
-class SubjectRepo {
-    saveSubject(subject:Subject) {
-        return getRepository(Subject).save(subject);
+@EntityRepository(Subject)
+class SubjectRepo extends Repository<Subject>{
+    async saveAll(subjectsList:Array<Subject>) {
+        await subjectsList.forEach(async subject => {
+            await this.save(subject);
+        })
     }
 
     getAllSubjects() {
-        return getRepository(Subject).find();
-    }
-
-    getAllSubjectsOfStudent() {
-
+        return this.find();
     }
 
     getSubjectById(subjectId: number) {
-        return getRepository(Subject).findOne(subjectId);
+        return this.findOne(subjectId);
     }
 }
 

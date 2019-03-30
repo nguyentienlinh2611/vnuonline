@@ -1,27 +1,17 @@
-import {Entity, PrimaryColumn, Column, OneToOne, JoinColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne} from "typeorm";
-import Student from "./Student";
-import Subject from "./Subject";
-import Score from "./Score";
+import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
+import TermStudent from "./TermStudent";
+import ClassSubject from "./ClassSubject";
 
-@Entity("term_student")
+@Entity("term")
 class Term {
-    @PrimaryGeneratedColumn({type: "int"})
-    aiid: number;
-    @Column({type: "int"})
-    termId: number;
-    @Column({type: "int"})
-    displayId: number;
+    @PrimaryColumn({type: "int"})
+    id: number;
     @Column()
     termName: string;
-    @Column({type: "double", nullable: true})
-    gpaScore: number;
-    @Column({type: "double", nullable: true})
-    cumulativeScore: number;
-    @ManyToOne(type => Student, student => student.terms)
-    @JoinColumn({name: "studentId"})
-    student: Student;
-    @OneToMany(type => Score, score => score.term)
-    scores: Score[];
+    @OneToMany(type => TermStudent, termStudent => termStudent.term)
+    termStudent: TermStudent[];
+    @OneToMany(type => ClassSubject, classSubject => classSubject.term)
+    classSubject: ClassSubject[];
 }
 
 export default Term;

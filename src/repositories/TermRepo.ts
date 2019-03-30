@@ -1,26 +1,16 @@
 import Term from "../entities/Term";
-import { getRepository } from "typeorm";
-import Student from "../entities/Student";
+import {EntityRepository, Repository} from "typeorm";
 
-class TermRepo {
-    saveTerm(term:Term) {
-        return getRepository(Term).save(term);
+@EntityRepository(Term)
+class TermRepo extends Repository<Term> {
+    async saveAll(termsList: Array<Term>) {
+        await termsList.forEach(async term => {
+            await this.save(term);
+        })
     }
 
-    getAllTermsByTermId(termId: number) {
-        return getRepository(Term).find({ termId: termId });
-    }
-
-    getTermByAIID(aiid: number) {
-        return getRepository(Term).findOne({aiid: aiid});
-    }
-
-    getAllTermsOfStudent(student: Student) {
-        return getRepository(Term).find({student: student});
-    }
-
-    getTermByTermIdAndStudentId(student: Student, termId: number) {
-        return getRepository(Term).findOne({student, termId});
+    getAllTerms(id: number) {
+        return this.find();
     }
 }
 

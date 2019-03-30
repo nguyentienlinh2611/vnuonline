@@ -1,0 +1,48 @@
+version: '3'
+services:
+   openface:
+      container_name: vnuonline_openface
+      build: ../vnuonline_openface
+      volumes:
+         - ../vnuonline_openface:/root/openface
+         - data:/root/openface/data
+      ports:
+         - "5000:5000"
+      expose:
+         - "5000"
+      tty: true
+      stdin_open: true
+   database:
+      container_name: vnuonline_database
+      build: ./db
+      image: "mysql:latest"
+      command: --default-authentication-plugin=mysql_native_password
+      ports:
+         - "3306:3306"
+      expose:
+         - "3306"
+      tty: true
+      stdin_open: true
+      restart: on-failure
+      environment:
+         - MYSQL_ROOT_PASSWORD=lts18737
+         - MYSQL_DATABASE=vnuonline
+   web:
+      container_name: vnuonline_web
+      privileged: true
+      build: .
+      ports:
+         - "3000:3000"
+      volumes:
+         - data:/usr/src/app/data
+         - .:/usr/src/app
+         - /var/run/docker.sock:/var/run/docker.sock
+      restart: on-failure
+      links:
+         - openface
+         - database
+      depends_on:
+         - openface 
+         - database
+volumes:
+      data:

@@ -1,18 +1,21 @@
-import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
+import {Entity, Column, OneToMany, PrimaryColumn} from "typeorm";
 import Score from "./Score";
+import ClassSubject from "./ClassSubject";
 
 @Entity("subject")
 class Subject {
-    @PrimaryColumn({type: "int"})
-    subjectId: number;
-    @Column()
-    displayId: string;
+    @PrimaryColumn({type: "varchar"})
+    id: string;
+    @Column({type: "int", nullable: true})
+    code: number;
     @Column()
     subjectName: string;
-    @Column({type: "int"})
+    @Column({type: "int", nullable: true})
     creditNumber: number;
-    @OneToMany(type => Score, score => score.term)
+    @OneToMany(type => Score, score => score.subject)
     scores: Score[];
+    @OneToMany(type => ClassSubject, classSubject => classSubject.subject)
+    classSubject: ClassSubject[];
 }
 
 export default Subject;
