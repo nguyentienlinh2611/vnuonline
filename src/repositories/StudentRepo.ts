@@ -4,7 +4,11 @@ import {EntityRepository, Repository} from "typeorm";
 @EntityRepository(Student)
 class StudentRepo extends Repository<Student>{
     async getStudentByUserId(userId:string) {
-        return this.findOne({where: {userId: userId}});
+        let student = await this.createQueryBuilder("student")
+            .leftJoin("student.user","user")
+            .where("user.id = :userId",{userId: userId})
+            .getOne();
+        return student;
     }
 }
 

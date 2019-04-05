@@ -35,9 +35,9 @@ export async function getCurrentSchedulesOfStudent(req, res) {
 
         const {userId} = req.authentication;
 
-        const student:Student = await studentRepo.getStudentByUserId(userId);
+        let student:Student = await studentRepo.getStudentByUserId(userId);
 
-        const result: Array<ClassSubject> = await classSubjectRepo.getAllSchedulesOfStudentInTerm(student.id, CurrentTerm.get().id);
+        let result: Array<ClassSubject> = await classSubjectRepo.getAllSchedulesOfStudentInTerm(student.id, CurrentTerm.get().id);
 
         return res.send(result);
     } catch (err) {

@@ -6,6 +6,8 @@ class Resource {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @Column({type: "varchar"})
+    name: string;
+    @Column({type: "varchar"})
     source: string;
     @Column({type: "varchar"})
     mimeType: string;

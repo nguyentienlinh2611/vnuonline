@@ -31,6 +31,11 @@ class ResourceRepo extends Repository<Resource>{
             }
         })
     }
+
+    findAndMapUser(id: string) {
+        return this.createQueryBuilder("resource")
+            .innerJoinAndSelect("resource.owner","user").where("resource.id = :id", { id: id }).getOne();
+    }
 }
 
 export default ResourceRepo;

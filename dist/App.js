@@ -30,11 +30,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 typeorm_1.createConnection(appConfig.dbOptions).then((connection) => __awaiter(this, void 0, void 0, function* () {
     console.log("Connected to DB");
     routers_1.default.forEach(route => {
-        app[route.method](route.path, (request, response, next) => {
-            route.action(request, response)
-                .then(() => next)
-                .catch(err => next(err));
-        });
+        if (route.method) {
+            app[route.method](route.path, ...route.middleware, (request, response, next) => {
+                route.action(request, response)
+                    .then(() => next)
+                    .catch(err => next(err));
+            });
+        }
     });
 })).catch(error => console.log("TypeORM connection error: ", error));
 exports.default = app;

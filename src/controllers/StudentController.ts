@@ -30,16 +30,16 @@ export async function signIn(req: Request, res: Response) {
                         return res.json({token: jwt.sign({userId: userId}, "VNUONLINE")});
                     } catch (err) {
                         if (err.message === "PASSWORD_NOT_MATCH") {
-                            return res.status(401).send("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại");
+                            return res.status(401).send({error: "Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại"});
                         }
                     }
                 } else if (req.body.type === "TEACHER") {
-                    return res.status(401).send("Tài khoản không tồn tại! Vui lòng đăng ký tài khoản");
+                    return res.status(401).send({error: "Tài khoản không tồn tại! Vui lòng đăng ký tài khoản"});
                 }
             case "PASSWORD_NOT_MATCH":
-                return res.status(401).send("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại");
+                return res.status(401).send({error: "Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại"});
             default:
-                return res.status(500).send();
+                return res.status(500).send({error: "Internal Server Error"});
         }
     }
 }

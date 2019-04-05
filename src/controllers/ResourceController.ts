@@ -3,6 +3,12 @@ import ResourceRepo from "../repositories/ResourceRepo";
 import {getCustomRepository} from "typeorm";
 import * as fs from "fs";
 import Resource from "../entities/Resource";
+import Student from "../entities/Student";
+import StudentRepo from "../repositories/StudentRepo";
+import UserRepo from "../repositories/UserRepo";
+import User from "../entities/User";
+import {accessSync} from "fs";
+const express= require("express");
 
 const thumb = require('node-thumbnail').thumb;
 
@@ -19,14 +25,14 @@ const trainingStorage = multer.diskStorage({
         const {userId} = req.authentication;
         const path = './data/known/' + userId;
         const isExists = fs.existsSync(path);
-        if(!isExists) {
+        if (!isExists) {
             fs.mkdirSync(path);
             fs.mkdirSync(`./data/thumbnail/${userId}`);
         }
         cb(null, path)
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now()+file.originalname)
+        cb(null, Date.now() + file.originalname)
     }
 });
 
@@ -59,30 +65,77 @@ export const uploadTest = multer({
 export async function uploadTrainingData(req, res) {
     try {
         const resourceRepo: ResourceRepo = getCustomRepository(ResourceRepo);
-        const {userId} = req.authentication;
-        const {files} = req;
-        let result = [];
-        files.forEach(file => {
-            let resource: Resource = new Resource();
-            resource.mimeType = file.mimetype;
-            resource.source = file.path;
-            resource.createdTime = new Date();
-            resource.owner = userId;
-            resource.type = "attendance_training";
+        const userRepo: UserRepo = getCustomRepository(UserRepo);
 
-            if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-                thumb({
-                    source: file.path,
-                    destination: `data/thumbnail/${userId}`,
-                    width: 150
-                });
-                resource.thumbnailSource = `data/thumbnail/${userId}/${file.filename}`;
-            }
-            resourceRepo.save(resource);
-            result.push(resource);
-        });
+        const {userId} = req.authentication;
+
+        const owner: User = await userRepo.findOne(userId);
+
+        const {file} = req;
+        let result = [];
+        let resource: Resource = new Resource();
+        resource.name = file.filename;
+        resource.mimeType = file.mimetype;
+        resource.source = file.path;
+        resource.owner = owner;
+        resource.createdTime = new Date();
+        resource.type = "attendance_training";
+
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            thumb({
+                prefix: '',
+                suffix: '',
+                source: file.path,
+                destination: `data/thumbnail/${userId}`,
+                width: 150
+            });
+            resource.thumbnailSource = `data/thumbnail/${userId}/${file.filename}`;
+        }
+        const resourceResult: Resource = await resourceRepo.save(resource);
+        result.push(resourceResult);
 
         return res.send(result);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export async function getResource(req, res) {
+    try {
+        const resourceRepo: ResourceRepo = getCustomRepository(ResourceRepo);
+
+        const {userId} = req.authentication;
+        const {resourceId} = req.params;
+        const resource: Resource = await resourceRepo.findAndMapUser(resourceId);
+        if (resource.owner.id !== userId) {
+            return res.status(403).send("Access Denied");
+        }
+
+        if (resource.mimeType === 'image/jpeg' || resource.mimeType === 'image/png') {
+            const {path} = req.route;
+            if (path.includes('thumbnail')) {
+                const {name, thumbnailSource} = resource;
+                return res.download(thumbnailSource, `thumbnail_${name}`);
+            }
+        }
+        const {name, source} = resource;
+
+        return res.download(source, name);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export async function getFacesResource(req, res) {
+    try {
+        const resourceRepo: ResourceRepo = getCustomRepository(ResourceRepo);
+        const {userId} = req.authentication;
+
+        const resources: Array<Resource> = await resourceRepo.findByUserAndType(userId, "attendance_training");
+
+        return res.send(resources);
     } catch (err) {
         console.log(err);
         return res.status(500).send("Internal Server Error");

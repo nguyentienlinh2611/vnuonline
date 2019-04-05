@@ -13,7 +13,7 @@ class Crawler {
     static getBrowserContext() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.browser) {
-                this.browser = yield puppeteer.launch();
+                this.browser = yield puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             }
             const context = yield this.browser.createIncognitoBrowserContext();
             return context;

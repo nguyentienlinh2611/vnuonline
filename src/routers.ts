@@ -9,7 +9,13 @@ import {
     getSchedulesOfStudentInTerm
 } from "./controllers/ClassScheduleController";
 import {teacherRegister} from "./controllers/TeacherController";
-import {uploadTest, uploadTraining, uploadTrainingData} from "./controllers/ResourceController";
+import {
+    getFacesResource,
+    getResource,
+    uploadTest,
+    uploadTraining,
+    uploadTrainingData
+} from "./controllers/ResourceController";
 import {getTermScoresOfStudent} from "./controllers/TermController";
 
 const AppRoutes = [
@@ -41,13 +47,13 @@ const AppRoutes = [
         path: "/upload/face",
         method: "post",
         action: uploadTrainingData,
-        middleware: [isUserAuthenticated, uploadTraining.array("images",20)]
+        middleware: [isUserAuthenticated, uploadTraining.single("images")]
     },
     {
         path: "/recognize",
         method: "post",
         action: recognizeUser,
-        middleware: [isUserAuthenticated, uploadTest.array("images",20), recognizePerson]
+        middleware: [isUserAuthenticated, uploadTest.single("images"), recognizePerson]
     },
     {
         path: "/schedules/:termId",
@@ -74,7 +80,7 @@ const AppRoutes = [
         middleware: []
     },
     {
-        path: "/terms/scores",
+        path: "/terms",
         method: "get",
         action: getTermScoresOfStudent,
         middleware: [isUserAuthenticated]
@@ -89,6 +95,24 @@ const AppRoutes = [
         path: "/scores/:subjectId",
         method: "get",
         action: getCurrentSchedulesOfStudent,
+        middleware: [isUserAuthenticated]
+    },
+    {
+        path: "/resource/face",
+        method: "get",
+        action: getFacesResource,
+        middleware: [isUserAuthenticated]
+    },
+    {
+        path: "/resource/thumbnail/:resourceId",
+        method: "get",
+        action: getResource,
+        middleware: [isUserAuthenticated]
+    },
+    {
+        path: "/resource/:resourceId",
+        method: "get",
+        action: getResource,
         middleware: [isUserAuthenticated]
     }
 ];

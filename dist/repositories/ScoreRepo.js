@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -10,19 +16,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Score_1 = require("../entities/Score");
 const typeorm_1 = require("typeorm");
-class ScoreRepo {
-    saveScore(score) {
+let ScoreRepo = class ScoreRepo extends typeorm_1.Repository {
+    saveAll(scoresList) {
         return __awaiter(this, void 0, void 0, function* () {
-            var scr = yield typeorm_1.getRepository(Score_1.default).find({ where: { term: score.term, subject: score.subject } });
-            return typeorm_1.getRepository(Score_1.default).save(score);
+            yield scoresList.forEach((score) => __awaiter(this, void 0, void 0, function* () {
+                yield this.save(score);
+            }));
         });
     }
     getScore(term, subject) {
-        return typeorm_1.getRepository(Score_1.default).findOne({ where: { term: term, subject: subject } });
+        return this.findOne({ where: { term: term, subject: subject } });
     }
     getAllScores() {
-        return typeorm_1.getRepository(Score_1.default).find();
+        return this.find();
     }
-}
+};
+ScoreRepo = __decorate([
+    typeorm_1.EntityRepository(Score_1.default)
+], ScoreRepo);
 exports.default = ScoreRepo;
 //# sourceMappingURL=ScoreRepo.js.map

@@ -13,10 +13,7 @@ export const isUserAuthenticated = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(403).json({
-            status: 403,
-            message: 'FORBIDDEN'
-        })
+        return res.status(403).json({error: "Truy cập trái phép, vui lòng thử lại!"})
     } else {
         const token = getBearerToken(authHeader);
 
@@ -24,10 +21,7 @@ export const isUserAuthenticated = async (req, res, next) => {
             try {
                 jwt.verify(token, "VNUONLINE", function(err, decode) {
                     if(err) {
-                        return res.status(401).json({
-                            status: 401,
-                            message: 'UNAUTHORIZED'
-                        })
+                        return res.status(401).json({error: "Truy cập trái phép, vui lòng thử lại!"})
                     }
                     req.authentication = {
                         userId: decode.userId
@@ -35,16 +29,10 @@ export const isUserAuthenticated = async (req, res, next) => {
                     next();
                 });
             } catch(err) {
-                    return res.status(401).json({
-                        status: 401,
-                        message: 'UNAUTHORIZED'
-                    })
+                    return res.status(401).json({error: "Truy cập trái phép, vui lòng thử lại!"})
             }
         } else {
-            return res.status(403).json({
-                status: 403,
-                message: 'FORBIDDEN'
-            })
+            return res.status(403).json({error: "Truy cập trái phép, vui lòng thử lại!"})
         }
     }
 }
