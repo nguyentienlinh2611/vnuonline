@@ -14,8 +14,11 @@ import User from "../entities/User";
 import Resource from "../entities/Resource";
 
 export let dbOptions: ConnectionOptions = {
+    name: "vnuonline",
     type: "mysql",
-    host: 'localhost',
+    extra: {
+        socketPath: "/cloudsql/data-button-236703:asia-east2:vnuonline"
+    },
     port: 3306,
     username: "root",
     password: "lts18737",

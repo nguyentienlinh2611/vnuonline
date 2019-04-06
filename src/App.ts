@@ -34,4 +34,6 @@ createConnection(appConfig.dbOptions).then(async connection => {
     });
 }).catch(error => console.log("TypeORM connection error: ", error));
 
+app.use('/static',express.static('public'));
+
 export default app;

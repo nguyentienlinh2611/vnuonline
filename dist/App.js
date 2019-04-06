@@ -39,5 +39,6 @@ typeorm_1.createConnection(appConfig.dbOptions).then((connection) => __awaiter(t
         }
     });
 })).catch(error => console.log("TypeORM connection error: ", error));
+app.use('/static', express.static('public'));
 exports.default = app;
 //# sourceMappingURL=App.js.map
