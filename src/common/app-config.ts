@@ -15,7 +15,7 @@ import Resource from "../entities/Resource";
 
 export let dbOptions: ConnectionOptions = {
     type: "mysql",
-    host: 'localhost',
+    host: 'vnuonline_database',
     port: 3306,
     username: "root",
     password: "lts18737",

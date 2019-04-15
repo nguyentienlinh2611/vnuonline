@@ -11,9 +11,7 @@ import ClassScheduleRepo from "../repositories/ClassScheduleRepo";
 import User from "../entities/User";
 import UserRepo from "../repositories/UserRepo";
 import {getCustomRepository} from "typeorm";
-import {log} from "util";
 
-const uuidv1 = require('uuid/v1');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -22,6 +20,7 @@ export async function signIn(req: Request, res: Response) {
         const userId = await checkAuthentication(req.body.username, req.body.password, req.body.type);
         return res.json({token: jwt.sign({userId: userId}, "VNUONLINE")});
     } catch (err) {
+        console.log(err);
         switch (err.message) {
             case "USER_NOT_EXISTS":
                 if (req.body.type === "STUDENT") {

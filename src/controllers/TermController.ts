@@ -26,7 +26,6 @@ export const getTermScoresOfStudent = async (req, res) => {
     try {
         const termStudentRepo: TermStudentRepo = getCustomRepository(TermStudentRepo);
         const studentRepo: StudentRepo = getCustomRepository(StudentRepo);
-        const termRepo: TermRepo = getCustomRepository(TermRepo);
 
         const {userId} = req.authentication;
 

@@ -20,7 +20,6 @@ const ClassScheduleRepo_1 = require("../repositories/ClassScheduleRepo");
 const User_1 = require("../entities/User");
 const UserRepo_1 = require("../repositories/UserRepo");
 const typeorm_1 = require("typeorm");
-const uuidv1 = require('uuid/v1');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 function signIn(req, res) {
@@ -30,6 +29,7 @@ function signIn(req, res) {
             return res.json({ token: jwt.sign({ userId: userId }, "VNUONLINE") });
         }
         catch (err) {
+            console.log(err);
             switch (err.message) {
                 case "USER_NOT_EXISTS":
                     if (req.body.type === "STUDENT") {

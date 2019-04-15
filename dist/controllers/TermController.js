@@ -31,7 +31,6 @@ exports.getTermScoresOfStudent = (req, res) => __awaiter(this, void 0, void 0, f
     try {
         const termStudentRepo = typeorm_1.getCustomRepository(TermStudentRepo_1.default);
         const studentRepo = typeorm_1.getCustomRepository(StudentRepo_1.default);
-        const termRepo = typeorm_1.getCustomRepository(TermRepo_1.default);
         const { userId } = req.authentication;
         const student = yield studentRepo.getStudentByUserId(userId);
         const termStudents = yield termStudentRepo.getAllTermsOfStudent(student);

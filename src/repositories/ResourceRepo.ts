@@ -1,5 +1,6 @@
 import {EntityRepository, getRepository, Repository} from "typeorm";
 import Resource from "../entities/Resource";
+import User from "../entities/User";
 
 @EntityRepository(Resource)
 class ResourceRepo extends Repository<Resource>{
@@ -20,10 +21,10 @@ class ResourceRepo extends Repository<Resource>{
         })
     }
 
-    findByUserAndType(userId: string, type: string) {
+    findByUserAndType(user: User, type: string) {
         return this.find({
             where: {
-                ownerId: userId,
+                owner: user,
                 type: type
             },
             order: {

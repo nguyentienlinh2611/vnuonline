@@ -50,8 +50,6 @@ CMD ["google-chrome-unstable"]
 # Bundle app source
 COPY . /usr/src/app
 
-COPY data /usr/src/data
-
 COPY wait-for-it.sh /
 
 EXPOSE 3000

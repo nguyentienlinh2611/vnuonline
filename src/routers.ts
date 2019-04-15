@@ -1,6 +1,6 @@
-import {recognizeUser, userRegister} from "./controllers/UserController";
+import {userRegister} from "./controllers/UserController";
 import {signIn} from "./controllers/StudentController";
-import {confirmAttendance, recognizePerson, takeRollCall, uploadImage} from "./controllers/AttendanceController";
+import {confirmAttendance, takeRollCall} from "./controllers/AttendanceController";
 import {isUserAuthenticated} from "./controllers/AuthorizeController";
 import {
     getCurrentSchedulesOfClass,
@@ -12,11 +12,11 @@ import {teacherRegister} from "./controllers/TeacherController";
 import {
     getFacesResource,
     getResource,
-    uploadTest,
-    uploadTraining,
     uploadTrainingData
 } from "./controllers/ResourceController";
 import {getTermScoresOfStudent} from "./controllers/TermController";
+import {uploadTest, uploadTraining} from "./controllers/FileDataController";
+import {detectionMiddleware, recognizeMiddleware, recognizePerson} from "./controllers/RecognizeController";
 
 const AppRoutes = [
     {
@@ -35,7 +35,7 @@ const AppRoutes = [
         path: "/rollcall",
         method: "post",
         action: takeRollCall,
-        middleware: [isUserAuthenticated, uploadTest.array("resource",20), recognizePerson]
+        middleware: [isUserAuthenticated, uploadTest.array("resource",20), detectionMiddleware, recognizeMiddleware]
     },
     {
         path: "/confirm",
@@ -47,13 +47,13 @@ const AppRoutes = [
         path: "/upload/face",
         method: "post",
         action: uploadTrainingData,
-        middleware: [isUserAuthenticated, uploadTraining.single("images")]
+        middleware: [isUserAuthenticated, uploadTraining.single("images"), detectionMiddleware]
     },
     {
         path: "/recognize",
         method: "post",
-        action: recognizeUser,
-        middleware: [isUserAuthenticated, uploadTest.single("images"), recognizePerson]
+        action: recognizePerson,
+        middleware: [isUserAuthenticated, uploadTest.single("images"), detectionMiddleware, recognizeMiddleware]
     },
     {
         path: "/schedules/:termId",

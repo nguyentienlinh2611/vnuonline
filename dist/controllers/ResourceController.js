@@ -8,59 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const multer = require("multer");
 const ResourceRepo_1 = require("../repositories/ResourceRepo");
 const typeorm_1 = require("typeorm");
-const fs = require("fs");
 const Resource_1 = require("../entities/Resource");
 const UserRepo_1 = require("../repositories/UserRepo");
-const express = require("express");
 const thumb = require('node-thumbnail').thumb;
-const imageFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-        cb(null, true);
-    }
-    else {
-        cb(null, false);
-    }
-};
-const trainingStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const { userId } = req.authentication;
-        const path = './data/known/' + userId;
-        const isExists = fs.existsSync(path);
-        if (!isExists) {
-            fs.mkdirSync(path);
-            fs.mkdirSync(`./data/thumbnail/${userId}`);
-        }
-        cb(null, path);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname);
-    }
-});
-const testStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './data/unknown');
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname);
-    }
-});
-exports.uploadTraining = multer({
-    storage: trainingStorage,
-    limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: imageFilter
-});
-exports.uploadTest = multer({
-    storage: testStorage,
-    limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: imageFilter
-});
 function uploadTrainingData(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -82,10 +34,10 @@ function uploadTrainingData(req, res) {
                     prefix: '',
                     suffix: '',
                     source: file.path,
-                    destination: `data/thumbnail/${userId}`,
+                    destination: `data/known/${userId}/thumbnail`,
                     width: 150
                 });
-                resource.thumbnailSource = `data/thumbnail/${userId}/${file.filename}`;
+                resource.thumbnailSource = `data/known/${userId}/thumbnail/${file.filename}`;
             }
             const resourceResult = yield resourceRepo.save(resource);
             result.push(resourceResult);
@@ -129,8 +81,10 @@ function getFacesResource(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const resourceRepo = typeorm_1.getCustomRepository(ResourceRepo_1.default);
+            const userRepo = typeorm_1.getCustomRepository(UserRepo_1.default);
             const { userId } = req.authentication;
-            const resources = yield resourceRepo.findByUserAndType(userId, "attendance_training");
+            const owner = yield userRepo.findOne(userId);
+            const resources = yield resourceRepo.findByUserAndType(owner, "attendance_training");
             return res.send(resources);
         }
         catch (err) {

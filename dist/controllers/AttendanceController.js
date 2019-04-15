@@ -8,82 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Resource_1 = require("../entities/Resource");
 const typeorm_1 = require("typeorm");
-const User_1 = require("../entities/User");
-const FileUtils_1 = require("../utils/FileUtils");
 const AttendanceRepo_1 = require("../repositories/AttendanceRepo");
 const AttendanceResourceRepo_1 = require("../repositories/AttendanceResourceRepo");
-const UserRepo_1 = require("../repositories/UserRepo");
 const StudentRepo_1 = require("../repositories/StudentRepo");
 const ClassScheduleRepo_1 = require("../repositories/ClassScheduleRepo");
 const Attendance_1 = require("../entities/Attendance");
 const TeacherRepo_1 = require("../repositories/TeacherRepo");
-const uuidv4 = require('uuid/v4');
-exports.request = (options) => {
-    const headers = new Headers({
-        'Content-Type': 'application/json',
-    });
-    const defaults = { headers: headers };
-    options = Object.assign({}, defaults, options);
-    return fetch(options.url, options)
-        .then(response => response.json().then(json => {
-        if (!response.ok) {
-            return Promise.reject(json);
-        }
-        return json;
-    }).catch(err => {
-        return Promise.reject(err);
-    })).catch(err => {
-        return Promise.reject(err);
-    });
-};
-exports.uploadImage = (req, res) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const { userId } = req.authentication;
-        const { base64, type, description } = req.body;
-        const uuid = uuidv4();
-        const filePath = yield FileUtils_1.Base64ToImage(`data/training_images/${userId}`, `${uuid}.jpg`, base64);
-        let resource = new Resource_1.default();
-        resource.owner = yield typeorm_1.getRepository(User_1.default).findOne(userId);
-        resource.createdTime = new Date();
-        resource.type = type;
-        if (description)
-            resource.description = description;
-        resource.source = filePath;
-        typeorm_1.getRepository(Resource_1.default).save(resource);
-        return res.send();
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).send("Internal Server Error");
-    }
-});
-exports.recognizePerson = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const userRepo = typeorm_1.getCustomRepository(UserRepo_1.default);
-        const { files } = req;
-        console.log(files);
-        // const response = await request({
-        //     url: 'http://vnuonline_openface:5000/recognize',
-        //     method: 'POST',
-        //     body: JSON.stringify(body)
-        // });
-        // let users;
-        // const {faces} = response;
-        // await faces.forEach(async face => {
-        //     const user: User = await userRepo.findOne(face.user);
-        //     users.push({id: user, img: face.img, confidence:face.confidence});
-        // });
-        // console.log(users);
-        // req.locals.faces = users;
-        next();
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(500).send("Internal Server Error");
-    }
-});
 exports.takeRollCall = (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
         const teacherRepo = typeorm_1.getCustomRepository(TeacherRepo_1.default);

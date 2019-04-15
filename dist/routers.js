@@ -8,6 +8,8 @@ const ClassScheduleController_1 = require("./controllers/ClassScheduleController
 const TeacherController_1 = require("./controllers/TeacherController");
 const ResourceController_1 = require("./controllers/ResourceController");
 const TermController_1 = require("./controllers/TermController");
+const FileDataController_1 = require("./controllers/FileDataController");
+const RecognizeController_1 = require("./controllers/RecognizeController");
 const AppRoutes = [
     {
         path: "/signin",
@@ -25,7 +27,7 @@ const AppRoutes = [
         path: "/rollcall",
         method: "post",
         action: AttendanceController_1.takeRollCall,
-        middleware: [AuthorizeController_1.isUserAuthenticated, ResourceController_1.uploadTest.array("resource", 20), AttendanceController_1.recognizePerson]
+        middleware: [AuthorizeController_1.isUserAuthenticated, FileDataController_1.uploadTest.array("resource", 20), RecognizeController_1.detectionMiddleware, RecognizeController_1.recognizeMiddleware]
     },
     {
         path: "/confirm",
@@ -37,13 +39,13 @@ const AppRoutes = [
         path: "/upload/face",
         method: "post",
         action: ResourceController_1.uploadTrainingData,
-        middleware: [AuthorizeController_1.isUserAuthenticated, ResourceController_1.uploadTraining.single("images")]
+        middleware: [AuthorizeController_1.isUserAuthenticated, FileDataController_1.uploadTraining.single("images"), RecognizeController_1.detectionMiddleware]
     },
     {
         path: "/recognize",
         method: "post",
-        action: UserController_1.recognizeUser,
-        middleware: [AuthorizeController_1.isUserAuthenticated, ResourceController_1.uploadTest.single("images"), AttendanceController_1.recognizePerson]
+        action: RecognizeController_1.recognizePerson,
+        middleware: [AuthorizeController_1.isUserAuthenticated, FileDataController_1.uploadTest.single("images"), RecognizeController_1.detectionMiddleware, RecognizeController_1.recognizeMiddleware]
     },
     {
         path: "/schedules/:termId",

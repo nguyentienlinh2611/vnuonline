@@ -2,14 +2,15 @@ version: '3'
 services:
    openface:
       container_name: vnuonline_openface
-      build: ../vnuonline_openface
+      build: openface
       volumes:
-         - ../vnuonline_openface:/root/openface
          - data:/root/openface/data
       ports:
          - "5000:5000"
+         - "9000:9000"
       expose:
          - "5000"
+         - "9000"
       tty: true
       stdin_open: true
    database:
@@ -42,7 +43,7 @@ services:
          - openface
          - database
       depends_on:
-         - openface 
+         - openface
          - database
 volumes:
       data:

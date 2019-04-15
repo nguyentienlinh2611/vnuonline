@@ -15,7 +15,7 @@ const User_1 = require("../entities/User");
 const Resource_1 = require("../entities/Resource");
 exports.dbOptions = {
     type: "mysql",
-    host: 'localhost',
+    host: 'vnuonline_database',
     port: 3306,
     username: "root",
     password: "lts18737",

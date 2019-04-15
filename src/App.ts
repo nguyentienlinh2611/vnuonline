@@ -5,7 +5,6 @@ import * as bodyParser from "body-parser";
 import {createConnection} from "typeorm";
 import * as appConfig from "./common/app-config";
 import AppRoutes from "./routers";
-import {isUserAuthenticated} from "./controllers/AuthorizeController";
 /**
  * Create Express server.
  */

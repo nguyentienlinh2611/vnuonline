@@ -34,10 +34,10 @@ let ResourceRepo = class ResourceRepo extends typeorm_1.Repository {
             }
         });
     }
-    findByUserAndType(userId, type) {
+    findByUserAndType(user, type) {
         return this.find({
             where: {
-                ownerId: userId,
+                owner: user,
                 type: type
             },
             order: {

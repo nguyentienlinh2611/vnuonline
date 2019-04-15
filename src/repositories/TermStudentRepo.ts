@@ -20,7 +20,20 @@ class TermStudentRepo extends Repository<TermStudent>{
     }
 
     getAllTermsOfStudent(student: Student) {
-        return this.createQueryBuilder("term_student").leftJoinAndSelect("term_student.term","term").orderBy("term.id", "ASC").getMany();
+        return this.find({
+            where: {
+                student: student
+            },
+            order: {
+                id: "ASC"
+            },
+            join: {
+                alias: "term_student",
+                leftJoinAndSelect: {
+                    term: "term_student.term"
+                }
+            }
+        });
     }
 
     getTermByTermAndStudent(student: Student, term: Term) {
