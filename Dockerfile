@@ -54,4 +54,4 @@ COPY wait-for-it.sh /
 
 EXPOSE 3000
 
-CMD /wait-for-it.sh database:3306 -- yarn run dev
+CMD /wait-for-it.sh database:3306 -- yarn run prod
