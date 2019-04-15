@@ -31,10 +31,6 @@ RUN chmod +x /usr/local/bin/dumb-init
 #     browser.launch({executablePath: 'google-chrome-unstable'})
 # ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN yarn install
-
 # Add user so we don't need --no-sandbox.
 # RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video  pptruser \
 #    && mkdir -p /home/pptruser/Downloads \
@@ -46,6 +42,11 @@ RUN yarn install
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["google-chrome-unstable"]
+
+# Install app dependencies
+COPY package.json /usr/src/app/
+RUN yarn install
+RUN yarn add reflect-metadata
 
 # Bundle app source
 COPY . /usr/src/app

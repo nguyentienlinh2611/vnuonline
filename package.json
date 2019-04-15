@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "npm run start",
+    "prod": "yarn run start",
     "build": "tsc",
     "start": "node dist",
     "dev": "tsc --watch & nodemon dist",
