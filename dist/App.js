@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
 const express = require("express");
 const bodyParser = require("body-parser");
 const typeorm_1 = require("typeorm");

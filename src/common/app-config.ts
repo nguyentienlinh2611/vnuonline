@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {ConnectionOptions} from "typeorm";
 import Student from "../entities/Student";
 import Subject from "../entities/Subject";

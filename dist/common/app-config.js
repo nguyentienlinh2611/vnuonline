@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
 const Student_1 = require("../entities/Student");
 const Subject_1 = require("../entities/Subject");
 const Score_1 = require("../entities/Score");
