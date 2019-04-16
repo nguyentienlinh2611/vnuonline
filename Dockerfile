@@ -46,7 +46,6 @@ CMD ["google-chrome-unstable"]
 # Install app dependencies
 COPY package.json /usr/src/app/
 RUN yarn install
-RUN yarn add reflect-metadata
 
 # Bundle app source
 COPY . /usr/src/app
