@@ -37,6 +37,7 @@ services:
       volumes:
          - data:/usr/src/app/data
          - .:/usr/src/app
+         - /usr/src/app/node_modules
          - /var/run/docker.sock:/var/run/docker.sock
       restart: on-failure
       links:
