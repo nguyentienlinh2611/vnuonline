@@ -20,9 +20,29 @@ const Term_1 = require("../entities/Term");
 let ClassScheduleRepo = class ClassScheduleRepo extends typeorm_1.Repository {
     saveAll(classScheduleList) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield classScheduleList.forEach((classSchedule) => __awaiter(this, void 0, void 0, function* () {
-                yield this.save(classSchedule);
-            }));
+            for (let i = 0; i < classScheduleList.length; i++) {
+                let classSchedule = classScheduleList[i];
+                yield this.createQueryBuilder("cs")
+                    .leftJoinAndSelect("cs.classSubject", "class")
+                    .where("class.id = :classSchedule", { classSchedule: classSchedule.classSubject.id })
+                    .getMany().then((existSchedules) => __awaiter(this, void 0, void 0, function* () {
+                    let i = 0;
+                    const isExist = function () {
+                        for (i; i < existSchedules.length; i++) {
+                            let exSche = existSchedules[i];
+                            if (exSche.periodFrom == classSchedule.periodFrom
+                                && exSche.periodTo == classSchedule.periodTo
+                                && exSche.dayOfWeek == classSchedule.dayOfWeek) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    };
+                    if (!isExist()) {
+                        yield this.save(classSchedule);
+                    }
+                }));
+            }
         });
     }
     getScheduleOfClassSubjectInTerm(classId, termId) {

@@ -78,13 +78,13 @@ class StudentCrawler {
                     sections: "",
                     locations: ""
                 };
-                subject.id = subjectHtml[1].innerText;
-                subject.name = subjectHtml[2].innerText;
-                subject.creditNumber = subjectHtml[3].innerText;
-                subject.classSubject = subjectHtml[6].innerText;
-                subject.days = subjectHtml[7].innerText;
-                subject.sections = subjectHtml[8].innerText;
-                subject.locations = subjectHtml[9].innerText;
+                subject.id = subjectHtml[1].innerText.trim();
+                subject.name = subjectHtml[2].innerText.trim();
+                subject.creditNumber = subjectHtml[3].innerText.trim();
+                subject.classSubject = subjectHtml[6].innerText.trim();
+                subject.days = subjectHtml[7].innerText.trim();
+                subject.sections = subjectHtml[8].innerText.trim();
+                subject.locations = subjectHtml[9].innerText.trim();
                 subjectsList.push(subject);
             }
             return subjectsList;
@@ -106,17 +106,17 @@ class StudentCrawler {
 
             for (let i = 0; i < days.length; i++) {
                 let classSchedule = new ClassSchedule();
-                classSchedule.dayOfWeek = days[i][0];
-                classSchedule.location = locations[i]?locations[i][0]:"";
-                classSchedule.periodFrom = sections[i][1];
-                classSchedule.periodTo = sections[i][2];
+                classSchedule.dayOfWeek = days[i][0].trim();
+                classSchedule.location = locations[i]?locations[i][0].trim():"";
+                classSchedule.periodFrom = sections[i][1].trim();
+                classSchedule.periodTo = sections[i][2].trim();
                 classSchedule.classSubject = classSubject;
                 classSchedules.push(classSchedule);
             }
 
-            subject.id = schedule.id;
-            subject.creditNumber = schedule.creditNumber;
-            subject.subjectName = schedule.name;
+            subject.id = schedule.id.trim();
+            subject.creditNumber = schedule.creditNumber.trim();
+            subject.subjectName = schedule.name.trim();
             classSubject.id = schedule.classSubject;
             classSubject.term = CurrentTerm.get();
             classSubject.subject = subject;
@@ -156,7 +156,7 @@ class StudentCrawler {
             var term = new Term();
             var termStudent = new TermStudent();
             term.id = parseInt(eInfoArray[1]);
-            term.termName = eInfoArray[2];
+            term.termName = eInfoArray[2].trim();
             termStudent.term = term;
             termStudent.gpaScore = eInfoArray[3];
             termStudent.cumulativeScore = eInfoArray[4];
@@ -166,33 +166,38 @@ class StudentCrawler {
 
         await page.goto(URL_DAOTAO_SCRINFO);
 
-        var {eduInfo, arrayObject} = await page.evaluate(() => {
+        var {eduInfo, arrayObject, stdSubInfo} = await page.evaluate(() => {
+            let subTable = <HTMLElement>document.querySelector('#divList1');
+            let subInfo = subTable.innerText;
+            let regexSub = /Lớp quản lý: ([0-9]*) ([A-Z,\s,&]*)/;
+            let resultSub = regexSub.exec(subInfo);
+            let stdSubInfo = {class: resultSub[1].trim(), branch: resultSub[2].trim()};
             let table = <HTMLElement>document.querySelector('#divList3');
             eduInfo = table.innerText;
-            var arraySubject = [...document.querySelectorAll('img[title="Chi tiết"]')];
-            var arrayObject = arraySubject.map((link: HTMLElement) => {
-                var regex = /detailPoint\W*([0-9]*)\W*([0-9.]*)\W*([0-9]*)\W*([0-9]*)/;
-                var result = regex.exec(link.onclick.toString());
-                var subject = {subjectId: result[1], stdId: result[3], termId: result[4]};
+            let arraySubject = [...document.querySelectorAll('img[title="Chi tiết"]')];
+            let arrayObject = arraySubject.map((link: HTMLElement) => {
+                let regex = /detailPoint\W*([0-9]*)\W*([0-9.]*)\W*([0-9]*)\W*([0-9]*)/;
+                let result = regex.exec(link.onclick.toString());
+                let subject = {subjectId: result[1].trim(), stdId: result[3].trim(), termId: result[4].trim()};
                 return subject;
             });
-            return {eduInfo, arrayObject};
+            return {eduInfo, arrayObject, stdSubInfo};
         });
 
         var student = new Student();
         while ((pInfoArray = REGEX_PERSONAL_INFO.exec(psnInfo)) !== null) {
             student.id = arrayObject[0].stdId;
             student.displayId = parseInt(pInfoArray[1]);
-            student.fullName = pInfoArray[2];
-            student.gender = pInfoArray[3];
-            student.country = pInfoArray[5];
-            student.hometown = pInfoArray[6];
-            student.address = pInfoArray[7];
-            student.phone = pInfoArray[8];
-            student.email = pInfoArray[9];
+            student.fullName = pInfoArray[2].trim();
+            student.gender = pInfoArray[3].trim();
+            student.country = pInfoArray[5].trim();
+            student.hometown = pInfoArray[6].trim();
+            student.address = pInfoArray[7].trim();
+            student.phone = pInfoArray[8].trim();
+            student.email = pInfoArray[9].trim();
             student.birthday = moment(pInfoArray[4], "DD-MM-YYYY").toDate();
-            // student.branch = "MT&KHTT";
-            // student.class = 60;
+            student.branch = stdSubInfo.branch;
+            student.class = stdSubInfo.class;
         }
 
         var termArray = eduInfo.split(REGEX_TERM_INFO);
@@ -214,10 +219,10 @@ class StudentCrawler {
             for (var j = 0; j < subjectArray.length; j += 7) {
                 var subject = new Subject();
                 var subjectObject = arrayObject[subjectCount];
-                subject.id = subjectArray[j + 1];
-                subject.code = subjectObject.subjectId;
-                subject.subjectName = subjectArray[j + 2];
-                subject.creditNumber = subjectArray[j + 3];
+                subject.id = subjectArray[j + 1].trim();
+                subject.code = subjectObject.subjectId.trim();
+                subject.subjectName = subjectArray[j + 2].trim();
+                subject.creditNumber = subjectArray[j + 3].trim();
                 subjectCount++;
                 subjects.push(subject);
 

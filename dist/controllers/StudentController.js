@@ -94,5 +94,26 @@ function signInStudent(studentId, password) {
         }
     });
 }
-;
+function getStudentInfo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const studentRepo = typeorm_1.getCustomRepository(StudentRepo_1.default);
+            let student;
+            if (req.params.hasOwnProperty("studentId")) {
+                const { studentId } = req.params;
+                student = yield studentRepo.findOne(studentId);
+            }
+            else {
+                const { userId } = req.authentication;
+                student = yield studentRepo.getStudentByUserId(userId);
+            }
+            res.send(student);
+        }
+        catch (err) {
+            console.log(err);
+            return res.status(500).send("Internal Server Error");
+        }
+    });
+}
+exports.getStudentInfo = getStudentInfo;
 //# sourceMappingURL=StudentController.js.map

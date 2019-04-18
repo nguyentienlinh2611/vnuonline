@@ -31,20 +31,8 @@ let TermStudentRepo = class TermStudentRepo extends typeorm_1.Repository {
         return this.findOne({ id: id });
     }
     getAllTermsOfStudent(student) {
-        return this.find({
-            where: {
-                student: student
-            },
-            order: {
-                id: "ASC"
-            },
-            join: {
-                alias: "term_student",
-                leftJoinAndSelect: {
-                    term: "term_student.term"
-                }
-            }
-        });
+        return this.createQueryBuilder('ts').leftJoinAndSelect("ts.term", "term")
+            .where("ts.student = :student", { student: student.id }).addOrderBy("term.id").getMany();
     }
     getTermByTermAndStudent(student, term) {
         return this.findOne({ student, term });

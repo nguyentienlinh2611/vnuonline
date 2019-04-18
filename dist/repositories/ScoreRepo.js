@@ -24,12 +24,6 @@ let ScoreRepo = class ScoreRepo extends typeorm_1.Repository {
             }));
         });
     }
-    getScore(term, subject) {
-        return this.findOne({ where: { term: term, subject: subject } });
-    }
-    getAllScores() {
-        return this.find();
-    }
 };
 ScoreRepo = __decorate([
     typeorm_1.EntityRepository(Score_1.default)

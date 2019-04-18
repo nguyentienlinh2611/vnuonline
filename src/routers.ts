@@ -1,5 +1,5 @@
 import {userRegister} from "./controllers/UserController";
-import {signIn} from "./controllers/StudentController";
+import {getStudentInfo, signIn} from "./controllers/StudentController";
 import {confirmAttendance, takeRollCall} from "./controllers/AttendanceController";
 import {isUserAuthenticated} from "./controllers/AuthorizeController";
 import {
@@ -32,7 +32,19 @@ const AppRoutes = [
         middleware: [userRegister]
     },
     {
-        path: "/rollcall",
+        path: "/student/info",
+        method: "get",
+        action: getStudentInfo,
+        middleware: [isUserAuthenticated]
+    },
+    {
+        path: "/student/info/:studentId",
+        method: "get",
+        action: getStudentInfo,
+        middleware: [isUserAuthenticated]
+    },
+    {
+        path: "/roll-call",
         method: "post",
         action: takeRollCall,
         middleware: [isUserAuthenticated, uploadTest.array("resource",20), detectionMiddleware, recognizeMiddleware]

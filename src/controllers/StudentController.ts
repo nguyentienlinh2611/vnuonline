@@ -11,6 +11,7 @@ import ClassScheduleRepo from "../repositories/ClassScheduleRepo";
 import User from "../entities/User";
 import UserRepo from "../repositories/UserRepo";
 import {getCustomRepository} from "typeorm";
+import Student from "../entities/Student";
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -82,4 +83,24 @@ async function signInStudent(studentId, password){
         console.log(err);
         throw new Error("PASSWORD_NOT_MATCH");
     }
-};
+}
+
+export async function getStudentInfo(req, res) {
+    try {
+        const studentRepo: StudentRepo = getCustomRepository(StudentRepo);
+
+        let student:Student;
+        if(req.params.hasOwnProperty("studentId")) {
+            const {studentId} = req.params;
+            student = await studentRepo.findOne(studentId);
+        } else {
+            const {userId} = req.authentication;
+            student = await studentRepo.getStudentByUserId(userId);
+        }
+
+        res.send(student);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+    }
+}

@@ -24,7 +24,19 @@ const AppRoutes = [
         middleware: [UserController_1.userRegister]
     },
     {
-        path: "/rollcall",
+        path: "/student/info",
+        method: "get",
+        action: StudentController_1.getStudentInfo,
+        middleware: [AuthorizeController_1.isUserAuthenticated]
+    },
+    {
+        path: "/student/info/:studentId",
+        method: "get",
+        action: StudentController_1.getStudentInfo,
+        middleware: [AuthorizeController_1.isUserAuthenticated]
+    },
+    {
+        path: "/roll-call",
         method: "post",
         action: AttendanceController_1.takeRollCall,
         middleware: [AuthorizeController_1.isUserAuthenticated, FileDataController_1.uploadTest.array("resource", 20), RecognizeController_1.detectionMiddleware, RecognizeController_1.recognizeMiddleware]
